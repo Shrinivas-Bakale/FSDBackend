@@ -72,7 +72,7 @@ export const getServiceById = async (req, res) => {
     if (!doc.exists) {
       return res.status(404).send({ error: "Service not found" });
     }
-    return res.status(200).send(doc.data());
+    return res.status(200).send({ id: doc.id, ...doc.data() });
   } catch (error) {
     console.error("Error fetching service:", error);
     return res.status(500).send({ error: "Failed to fetch service" });
