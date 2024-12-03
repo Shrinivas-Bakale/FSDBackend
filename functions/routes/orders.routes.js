@@ -1,9 +1,11 @@
 import express from "express";
-import { createOrder, getOrdersByUser, deleteOrder } from "../controllers/orders.controller.js";
+import { createOrder, getOrdersByUser, deleteOrder, order } from "../controllers/orders.controller.js";
 
 const router = express.Router();
 
 // Create a new order
+router.post("/order", order);
+
 router.post("/create", createOrder);
 
 // Get all orders by a user

@@ -1,4 +1,5 @@
 import { db } from "../firebase.js";
+import { deleteDoc, doc } from "firebase/firestore";
 
 export const addToCart = async (req, res) => {
   try {
@@ -86,26 +87,33 @@ export const getCartItems = async (req, res) => {
 };
 
 export const removeFromCart = async (req, res) => {
+  const { userid, serviceid } = req.params;
+  console.log(userid, serviceid);
   try {
-    const { userid, serviceId } = req.params;
+    const { userid, serviceid } = req.params;
 
-    const cartRef = db.collection("carts").doc(userid);
-    const cartDoc = await cartRef.get();
-
-    if (!cartDoc.exists) {
+    // Reference the user's cart document
+    const cartRef = doc(db, "carts", userid);
+    console.log(cartRef);
+    // Fetch the current cart document
+    const cartDoc = await getDoc(cartRef);
+    console.log(cartDoc);
+    if (!cartDoc.exists()) {
       return res.status(404).send({ error: "Cart not found" });
     }
 
+    // Get the current cartItems array
     const cartData = cartDoc.data();
     const updatedCartItems = cartData.cartItems.filter(
-      (item) => item.serviceId !== serviceId
+      (item) => item.serviceId !== serviceid
     );
 
-    await cartRef.update({ cartItems: updatedCartItems });
+    // Update the cartItems field in Firestore
+    await updateDoc(cartRef, { cartItems: updatedCartItems });
 
     res.status(200).send({ message: "Item removed from cart successfully!" });
   } catch (error) {
-    console.error("Error removing from cart:", error);
+    console.error("Error removing item from cart:", error);
     res.status(500).send({ error: "Failed to remove item from cart" });
   }
 };

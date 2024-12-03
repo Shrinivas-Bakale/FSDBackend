@@ -1,23 +1,62 @@
 import { db } from "../firebase.js";
+import Razorpay from "razorpay";
+import dotenv from "dotenv";
+
+dotenv.config(); // Ensure environment variables are loaded
+
+export const order = async (req, res) => {
+  try {
+    // Create Razorpay instance
+    const instance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+
+    // Prepare order options
+    const { amount } = req.body; // Expecting amount in the request body
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: "Invalid or missing amount" });
+    }
+
+    const options = {
+      amount: amount * 100, // Convert to smallest currency unit (paise)
+      currency: "INR",
+      receipt: `order_rcptid_${Math.floor(Math.random() * 1000000)}`, // Generate a unique receipt ID
+    };
+
+    // Create order
+    const order = await instance.orders.create(options);
+
+    // Respond with the created order
+    res.status(200).json(order);
+  } catch (err) {
+    console.error("Error creating Razorpay order:", err);
+    res.status(500).json({ error: "Failed to create Razorpay order" });
+  }
+};
 
 // Add a new order
 export const createOrder = async (req, res) => {
   try {
-    const { amount, address, timeSlot, uid, paymentStatus } = req.body;
+    const { amount, address, timeSlot, uid, receiptId } = req.body;
 
-    if (!amount || !address || !timeSlot || !uid || !paymentStatus) {
+    console.log(amount, address, timeSlot, uid, receiptId);
+
+    if (!amount || !address || !timeSlot || !uid || !receiptId) {
       return res.status(400).send({ error: "All fields are required" });
     }
 
+    // Create the order object
     const newOrder = {
       amount,
       address,
       timeSlot,
       uid,
-      paymentStatus,
+      receiptId,
       createdAt: new Date().toISOString(),
     };
 
+    // Firestore automatically creates the collection if it doesn't exist when adding the document
     const docRef = await db.collection("orders").add(newOrder);
 
     res
@@ -28,6 +67,7 @@ export const createOrder = async (req, res) => {
     res.status(500).send({ error: "Failed to create order" });
   }
 };
+
 
 // Get all orders for a user
 export const getOrdersByUser = async (req, res) => {
