@@ -56,6 +56,11 @@ export const getCartItems = async (req, res) => {
   try {
     const { userid } = req.params;
 
+    // Validate userid
+    if (!userid || typeof userid !== "string") {
+      return res.status(400).send({ error: "Invalid or missing userid" });
+    }
+
     const cartRef = db.collection("carts").doc(userid);
     const cartDoc = await cartRef.get();
 
@@ -64,20 +69,29 @@ export const getCartItems = async (req, res) => {
     }
 
     const cartData = cartDoc.data();
-    const servicePromises = cartData.cartItems.map((item) =>
-      db.collection("services").doc(item.serviceId).get()
-    );
+
+    // Filter and validate cartItems
+    const servicePromises = cartData.cartItems
+      .filter((item) => item.serviceId && typeof item.serviceId === "string")
+      .map((item) => db.collection("services").doc(item.serviceId).get());
 
     const serviceDocs = await Promise.all(servicePromises);
 
-    const cartWithDetails = cartData.cartItems.map((item, index) => {
-      const service = serviceDocs[index].data();
-      return {
-        id: item.serviceId,
-        ...service,
-        quantity: item.quantity,
-      };
-    });
+    const cartWithDetails = cartData.cartItems
+      .map((item, index) => {
+        const serviceDoc = serviceDocs[index];
+        if (!serviceDoc.exists) {
+          console.warn(`Service with ID ${item.serviceId} not found.`);
+          return null; // Handle missing service gracefully
+        }
+        const service = serviceDoc.data();
+        return {
+          id: item.serviceId,
+          ...service,
+          quantity: item.quantity,
+        };
+      })
+      .filter((item) => item !== null); // Remove invalid entries
 
     res.status(200).send(cartWithDetails);
   } catch (error) {
