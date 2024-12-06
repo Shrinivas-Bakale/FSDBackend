@@ -68,6 +68,39 @@ export const createOrder = async (req, res) => {
   }
 };
 
+// Add a new order
+export const createOrderByServiceId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { amount, address, timeSlot, uid, receiptId } = req.body;
+
+    console.log(amount, address, timeSlot, uid, receiptId);
+
+    if (!amount || !address || !timeSlot || !uid || !receiptId) {
+      return res.status(400).send({ error: "All fields are required" });
+    }
+
+    // Create the order object
+    const newOrder = {
+      amount,
+      address,
+      timeSlot,
+      uid,
+      receiptId,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Firestore automatically creates the collection if it doesn't exist when adding the document
+    const docRef = await db.collection("orders").add(newOrder);
+
+    res
+      .status(201)
+      .send({ message: "Order created successfully", orderId: docRef.id });
+  } catch (error) {
+    console.error("Error creating order:", error);
+    res.status(500).send({ error: "Failed to create order" });
+  }
+};
 
 // Get all orders for a user
 export const getOrdersByUser = async (req, res) => {

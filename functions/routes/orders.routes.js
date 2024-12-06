@@ -1,5 +1,5 @@
 import express from "express";
-import { createOrder, getOrdersByUser, deleteOrder, order } from "../controllers/orders.controller.js";
+import { createOrder, getOrdersByUser, deleteOrder, order, createOrderByServiceId } from "../controllers/orders.controller.js";
 
 const router = express.Router();
 
@@ -7,6 +7,8 @@ const router = express.Router();
 router.post("/order", order);
 
 router.post("/create", createOrder);
+
+router.post("/createOrderByServiceId/:id", createOrderByServiceId);
 
 // Get all orders by a user
 router.get("/getOrders/:uid", getOrdersByUser);
