@@ -1,5 +1,5 @@
 const { db } = require("../firebase.js");
-const { deleteDoc, doc, getDoc, updateDoc } = require("firebase/firestore");
+const {  doc, getDoc, updateDoc } = require("firebase/firestore");
 
 exports.addToCart = async (req, res) => {
   try {

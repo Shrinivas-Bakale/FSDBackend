@@ -71,7 +71,7 @@ exports.createOrder = async (req, res) => {
 // Add a new order
 exports.createOrderByServiceId = async (req, res) => {
   try {
-    const { id } = req.params;
+    // const { id } = req.params;
     const { amount, address, timeSlot, uid, receiptId } = req.body;
 
     console.log(amount, address, timeSlot, uid, receiptId);
