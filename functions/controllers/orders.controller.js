@@ -1,10 +1,10 @@
-import { db } from "../firebase.js";
-import Razorpay from "razorpay";
-import dotenv from "dotenv";
+const { db } = require("../firebase.js");
+const Razorpay = require("razorpay");
+const dotenv = require("dotenv");
 
 dotenv.config(); // Ensure environment variables are loaded
 
-export const order = async (req, res) => {
+exports.order = async (req, res) => {
   try {
     // Create Razorpay instance
     const instance = new Razorpay({
@@ -36,7 +36,7 @@ export const order = async (req, res) => {
 };
 
 // Add a new order
-export const createOrder = async (req, res) => {
+exports.createOrder = async (req, res) => {
   try {
     const { amount, address, timeSlot, uid, receiptId } = req.body;
 
@@ -69,7 +69,7 @@ export const createOrder = async (req, res) => {
 };
 
 // Add a new order
-export const createOrderByServiceId = async (req, res) => {
+exports.createOrderByServiceId = async (req, res) => {
   try {
     const { id } = req.params;
     const { amount, address, timeSlot, uid, receiptId } = req.body;
@@ -103,7 +103,7 @@ export const createOrderByServiceId = async (req, res) => {
 };
 
 // Get all orders for a user
-export const getOrdersByUser = async (req, res) => {
+exports.getOrdersByUser = async (req, res) => {
   try {
     const { uid } = req.params;
 
@@ -133,7 +133,7 @@ export const getOrdersByUser = async (req, res) => {
 };
 
 // Delete an order by ID
-export const deleteOrder = async (req, res) => {
+exports.deleteOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
 

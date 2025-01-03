@@ -1,10 +1,10 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   addToCart,
   getCartItems,
   removeFromCart,
   clearCart
-} from "../controllers/cart.controller.js"; // Add .js extension
+} = require("../controllers/cart.controller.js"); // Add .js extension
 
 const router = express.Router();
 
@@ -13,4 +13,4 @@ router.get("/getCartItems/:userid", getCartItems);
 router.delete("/removeFromCart/:userid/:serviceid", removeFromCart);
 router.delete("/removeFromCart/:userid", clearCart);
 
-export default router;
+module.exports = router;

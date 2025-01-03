@@ -1,5 +1,11 @@
-import express from "express";
-import { createOrder, getOrdersByUser, deleteOrder, order, createOrderByServiceId } from "../controllers/orders.controller.js";
+const express = require("express");
+const { 
+  createOrder, 
+  getOrdersByUser, 
+  deleteOrder, 
+  order, 
+  createOrderByServiceId 
+} = require("../controllers/orders.controller.js"); // Add .js extension
 
 const router = express.Router();
 
@@ -16,4 +22,4 @@ router.get("/getOrders/:uid", getOrdersByUser);
 // Delete an order
 router.delete("/delete/:orderId", deleteOrder);
 
-export default router;
+module.exports = router;

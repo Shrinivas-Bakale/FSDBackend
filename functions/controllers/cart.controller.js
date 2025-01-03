@@ -1,7 +1,7 @@
-import { db } from "../firebase.js";
-import { deleteDoc, doc } from "firebase/firestore";
+const { db } = require("../firebase.js");
+const { deleteDoc, doc, getDoc, updateDoc } = require("firebase/firestore");
 
-export const addToCart = async (req, res) => {
+exports.addToCart = async (req, res) => {
   try {
     const { userid } = req.params;
     const { serviceId, quantity } = req.body; // { serviceId: "abc123", quantity: 1 }
@@ -9,10 +9,6 @@ export const addToCart = async (req, res) => {
     console.log(userid);
     if (!userid || typeof userid !== "string") {
       return res.status(400).send({ error: "Invalid userid" });
-    }
-
-    if (!serviceId || quantity <= 0) {
-      return res.status(400).send({ error: "Invalid serviceId or quantity" });
     }
 
     if (!serviceId || quantity <= 0) {
@@ -52,7 +48,7 @@ export const addToCart = async (req, res) => {
   }
 };
 
-export const getCartItems = async (req, res) => {
+exports.getCartItems = async (req, res) => {
   try {
     const { userid } = req.params;
 
@@ -100,15 +96,13 @@ export const getCartItems = async (req, res) => {
   }
 };
 
-export const removeFromCart = async (req, res) => {
+exports.removeFromCart = async (req, res) => {
   const { userid, serviceid } = req.params;
   console.log(userid, serviceid);
   try {
-    const { userid, serviceid } = req.params;
-
-    // Reference the user's cart document
     const cartRef = doc(db, "carts", userid);
     console.log(cartRef);
+
     // Fetch the current cart document
     const cartDoc = await getDoc(cartRef);
     console.log(cartDoc);
@@ -132,7 +126,7 @@ export const removeFromCart = async (req, res) => {
   }
 };
 
-export const clearCart = async (req, res) => {
+exports.clearCart = async (req, res) => {
   try {
     const { userid } = req.params;
 

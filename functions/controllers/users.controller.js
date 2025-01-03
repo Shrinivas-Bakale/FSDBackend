@@ -1,6 +1,6 @@
-import { db } from "../firebase.js";
+const { db } = require("../firebase.js");
 
-export const createUser = async (req, res) => {
+exports.createUser = async (req, res) => {
   try {
     const { email, name, phone, pincode, address, gender } = req.body;
 
@@ -41,7 +41,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-export const getAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
   try {
     const querySnapshot = await db.collection("users").get();
     if (querySnapshot.empty) {
@@ -58,7 +58,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-export const getUserById = async (req, res) => {
+exports.getUserById = async (req, res) => {
   try {
     const { id } = req.params;
     const doc = await db.collection("users").doc(id).get();
